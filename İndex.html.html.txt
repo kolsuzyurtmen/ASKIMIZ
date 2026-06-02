@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yakup & İlayda | Sonsuz Aşk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #c9184a;
+            --bg: #fff0f3;
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle, #fff0f3 0%, #ffccd5 100%);
+            color: #590d22;
+            overflow: hidden;
+        }
+
+        /* INTRO EKRANI */
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 1000; transition: all 1.2s cubic-bezier(0.7, 0, 0.3, 1);
+            color: white; text-align: center;
+        }
+
+        .intro-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 5rem; margin-bottom: 10px;
+        }
+
+        #enter-btn {
+            margin-top: 30px; padding: 15px 40px;
+            border: 2px solid white; background: white;
+            color: var(--secondary); font-size: 1.3rem; border-radius: 50px;
+            cursor: pointer; transition: 0.4s; font-weight: bold;
+        }
+
+        #enter-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(255,255,255,0.6); }
+
+        /* ANA İÇERİK */
+        .main-content {
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; height: 100vh; text-align: center; opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        .names {
+            font-family: 'Great Vibes', cursive;
+            font-size: 5.5rem; color: var(--secondary);
+            margin-bottom: 5px; animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #fff, 0 0 20px var(--primary); }
+            to { text-shadow: 0 0 20px #fff, 0 0 30px var(--secondary); }
+        }
+
+        /* SAYAÇ */
+        #timer {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;
+            max-width: 900px; padding: 10px;
+        }
+
+        .time-box {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px; border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.2);
+            min-width: 100px; border: 1px solid white;
+        }
+
+        .time-box span { display: block; font-size: 2.2rem; font-weight: 600; color: var(--primary); }
+        .time-box label { font-size: 0.8rem; color: #a4133c; text-transform: uppercase; }
+
+        .particle { position: absolute; pointer-events: none; z-index: -1; animation: floatUp linear infinite; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        /* Gizli YouTube Player */
+        #youtube-player { position: absolute; top: -100px; left: -100px; width: 1px; height: 1px; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div id="youtube-player"></div>
+
+    <div id="intro-screen">
+        <div class="intro-title">Yakup & İlayda</div>
+        <p style="font-size: 1.2rem; letter-spacing: 2px;">"Bana ellerini ver, hayat seni sevince güzel..."</p>
+        <button id="enter-btn">Müziği Başlat ve Gör ❤️</button>
+    </div>
+
+    <div class="main-content" id="main-content">
+        <div class="names">Yakup & İlayda</div>
+        <div style="font-size: 1.1rem; color: var(--secondary); margin-bottom: 25px; letter-spacing: 3px;">31 EKİM 2025 · 21:00</div>
+        
+        <div id="timer">
+            <div class="time-box"><span id="years">0</span><label>Yıl</label></div>
+            <div class="time-box"><span id="months">0</span><label>Ay</label></div>
+            <div class="time-box"><span id="days">0</span><label>Gün</label></div>
+            <div class="time-box"><span id="hours">0</span><label>Saat</label></div>
+            <div class="time-box"><span id="minutes">0</span><label>Dakika</label></div>
+            <div class="time-box"><span id="seconds">0</span><label>Saniye</label></div>
+        </div>
+
+        <div style="margin-top: 40px; font-family: 'Dancing Script'; font-size: 1.8rem; color: var(--secondary);">
+            "Seninle geçen her saniye bir hazine..."
+        </div>
+    </div>
+
+    <script>
+        // 1. YouTube API Yükleme
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '1',
+                width: '1',
+                videoId: 'gRjsXfD6ivo', // Özdemir Erdoğan - Bana Ellerini Ver
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'loop': 1,
+                    'playlist': 'gRjsXfD6ivo' // Döngü için gerekli
+                }
+            });
+        }
+
+        // 2. Butona Tıklanınca Intro Kapanır ve Müzik Başlar
+        document.getElementById('enter-btn').addEventListener('click', function() {
+            // Müzik Başlat
+            if (player && player.playVideo) {
+                player.playVideo();
+                player.unMute(); // Sesi açtığından emin ol
+                player.setVolume(100);
+            }
+
+            // Ekran Geçişi
+            document.getElementById('intro-screen').style.transform = 'translateY(-100%)';
+            document.getElementById('main-content').style.opacity = '1';
+            
+            setInterval(createParticle, 200);
+        });
+
+        // 3. Zaman Hesaplama (Aynı Mantık)
+        const startDate = new Date("2025-10-31T21:00:00");
+        function updateTimer() {
+            const now = new Date();
+            let years = now.getFullYear() - startDate.getFullYear();
+            let months = now.getMonth() - startDate.getMonth();
+            let days = now.getDate() - startDate.getDate();
+            if (days < 0) { months--; let pMonth = new Date(now.getFullYear(), now.getMonth(), 0); days += pMonth.getDate(); }
+            if (months < 0) { years--; months += 12; }
+            const diffMs = now - startDate;
+            const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+            const seconds = Math.floor((diffMs / 1000) % 60);
+            document.getElementById("years").innerText = Math.max(0, years);
+            document.getElementById("months").innerText = Math.max(0, months);
+            document.getElementById("days").innerText = Math.max(0, days);
+            document.getElementById("hours").innerText = Math.max(0, hours);
+            document.getElementById("minutes").innerText = Math.max(0, minutes);
+            document.getElementById("seconds").innerText = Math.max(0, seconds);
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // 4. Efektler
+        function createParticle() {
+            const p = document.createElement("div");
+            p.classList.add("particle");
+            p.innerHTML = Math.random() > 0.5 ? "❤️" : "✨";
+            p.style.left = Math.random() * 100 + "vw";
+            p.style.fontSize = (Math.random() * 20 + 10) + "px";
+            p.style.animationDuration = (Math.random() * 3 + 4) + "s";
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 6000);
+        }
+    </script>
+</body>
+</html>
